@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint-Alexandre — Centre Médical</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232E7D5B'/><path d='M50 20v60M20 50h60' stroke='white' stroke-width='12' stroke-linecap='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2E7D5B;
+  --green-dark:#1C5C40;
+  --green-mid:#3A9970;
+  --green-light:#E8F5EF;
+  --green-pale:#F2FAF6;
+  --green-accent:#5BBF8A;
+  --white:#FFFFFF;
+  --gray:#E2EDE8;
+  --gray2:#9BB5A8;
+  --text:#1A2E24;
+  --text2:#4A6558;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',serif}
+a{text-decoration:none;color:inherit}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--white)}
+::-webkit-scrollbar-thumb{background:var(--green-accent);border-radius:3px}
+
+/* NAVBAR */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color 0.3s,box-shadow 0.3s;padding:0 5%}
+#navbar.scrolled{border-color:var(--gray);box-shadow:0 2px 20px rgba(46,125,91,0.1)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav-logo{display:flex;flex-direction:column;gap:2px}
+.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;color:var(--green-dark);letter-spacing:0.12em;line-height:1}
+.nav-logo-bar{height:2px;background:var(--green-accent);width:100%}
+.nav-logo-sub{font-size:0.62rem;font-family:'DM Sans',sans-serif;color:var(--gray2);letter-spacing:0.2em;font-weight:500}
+.nav-menu{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav-menu a{font-size:0.85rem;font-weight:500;color:var(--text2);letter-spacing:0.05em;transition:color 0.2s;position:relative;padding-bottom:2px}
+.nav-menu a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--green-accent);transition:width 0.3s}
+.nav-menu a:hover{color:var(--green-dark)}
+.nav-menu a:hover::after{width:100%}
+.nav-cta{background:var(--green)!important;color:var(--white)!important;padding:0.55rem 1.3rem;border-radius:2px;font-size:0.82rem!important;letter-spacing:0.08em;transition:background 0.2s!important}
+.nav-cta::after{display:none!important}
+.nav-cta:hover{background:var(--green-dark)!important}
+.lang-toggle{background:transparent;border:1px solid var(--gray2);color:var(--green-dark);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;padding:0.35rem 0.7rem;cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;border-radius:2px;line-height:1}
+.lang-toggle:hover{background:var(--green);border-color:var(--green);color:var(--white)}
+.lang-toggle.active{background:var(--green);border-color:var(--green);color:var(--white)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.burger span{display:block;width:24px;height:2px;background:var(--green-dark);transition:0.3s}
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--white);border-top:1px solid var(--gray);z-index:999;padding:1.5rem 5%}
+.mobile-menu.open{display:block}
+.mobile-menu ul{list-style:none;display:flex;flex-direction:column;gap:1.2rem}
+.mobile-menu a{font-size:1rem;font-weight:500;color:var(--green-dark)}
+
+/* HERO */
+#home{position:relative;height:100vh;min-height:600px;overflow:hidden}
+@media(max-width:768px){#home{min-height:500px;height:80vh}}
+@media(max-width:480px){#home{min-height:420px;height:70vh}}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.9s ease;pointer-events:none}
+.slide.active{opacity:2;pointer-events:auto}
+.slide-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center top;background-repeat:no-repeat}
+.slide-bg::after{content:'';position:absolute;inset:0;/*background:linear-gradient(135deg,rgba(28,92,64,0.85) 0%,rgba(46,125,91,0.7) 100%)*/}
+.slide-overlay{position:absolute;inset:0;background:rgba(20,50,35,0.35);z-index:1}
+.slide-content{position:relative;z-index:2;text-align:center;padding:0 2rem;max-width:850px}
+.slide-badge{display:inline-block;border:1px solid rgba(91,191,138,0.55);color:var(--green-accent);font-size:0.72rem;letter-spacing:0.25em;font-family:'DM Sans',sans-serif;font-weight:500;padding:0.4rem 1.2rem;margin-bottom:2rem;text-transform:uppercase}
+.slide-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;color:var(--white);line-height:1.05;margin-bottom:1.2rem}
+.slide-title span{color:var(--green-accent)}
+.slide-sub{font-size:clamp(0.95rem,2vw,1.15rem);color:rgba(255,255,255,0.75);font-weight:400;max-width:560px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-btn{display:inline-block;background:var(--green-accent);color:var(--white);font-weight:600;font-size:0.85rem;letter-spacing:0.1em;padding:0.9rem 2.2rem;border-radius:2px;transition:background 0.2s;font-family:'DM Sans',sans-serif}
+.hero-btn:hover{background:#4DAF7C}
+.slide-dots{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10}
+.dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.35);cursor:pointer;transition:all 0.3s;border:none}
+.dot.active{background:var(--green-accent);width:36px;border-radius:6px}
+.hero-badges{position:absolute;bottom:5rem;right:5%;display:flex;flex-direction:column;gap:0.75rem;z-index:10}
+.hero-badge-pill{background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);color:var(--white);font-size:0.72rem;font-weight:500;padding:0.45rem 1rem;border-radius:20px;letter-spacing:0.05em;animation:floatBadge 3s ease-in-out infinite}
+.hero-badge-pill:nth-child(2){animation-delay:1s}
+.hero-badge-pill:nth-child(3){animation-delay:2s}
+@keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* SECTION COMMONS */
+.section-label{font-size:0.72rem;letter-spacing:0.3em;font-weight:500;color:var(--green-mid);text-transform:uppercase;margin-bottom:0.75rem;font-family:'DM Sans',sans-serif}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;color:var(--green-dark);line-height:1.15;margin-bottom:1rem}
+.green-line{width:48px;height:3px;background:var(--green-accent);margin-bottom:2rem}
+.green-line.center{margin:0 auto 2rem}
+.section-pad{padding:6rem 5%}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+/* ABOUT */
+#about{background:var(--green-pale)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;margin-top:3rem}
+.about-text p{font-size:1rem;color:var(--text2);line-height:1.8;margin-bottom:1.2rem}
+.about-values{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.5rem}
+.value-tag{background:var(--white);border:1px solid var(--gray);color:var(--green-dark);font-size:0.78rem;font-weight:500;padding:0.35rem 0.9rem;letter-spacing:0.05em}
+.about-card{background:var(--white);border:1px solid var(--gray);padding:2rem}
+.about-card-item{display:flex;align-items:flex-start;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--gray)}
+.about-card-item:last-child{border-bottom:none}
+.about-icon{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--green-light);color:var(--green)}
+.about-card-text strong{display:block;font-size:0.8rem;font-weight:600;color:var(--green-dark);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.3rem}
+.about-card-text span{font-size:0.92rem;color:var(--text2);line-height:1.5}
+.creation-boxes{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.creation-box{background:var(--green-dark);color:var(--white);padding:1.2rem;text-align:center}
+.creation-box .year{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--green-accent);display:block}
+.creation-box .label{font-size:0.7rem;letter-spacing:0.12em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-top:0.2rem}
+
+/* CENTRE MEDICAL */
+#medical{background:var(--white)}
+.services-intro{max-width:640px;margin-bottom:3rem}
+.services-intro p{font-size:1rem;color:var(--text2);line-height:1.8}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:3rem}
+.service-card{background:var(--green-pale);border:1px solid var(--gray);padding:1.4rem 1.2rem;display:flex;align-items:flex-start;gap:0.9rem;transition:border-color 0.2s,box-shadow 0.2s;cursor:default}
+.service-card:hover{border-color:var(--green-accent);box-shadow:0 4px 20px rgba(46,125,91,0.1)}
+.service-card svg{flex-shrink:0;color:var(--green)}
+.service-card-name{font-size:0.88rem;font-weight:500;color:var(--green-dark);line-height:1.4}
+
+/* STATS */
+#statistiques{background:var(--green-dark)}
+.stats-header{text-align:center;margin-bottom:4rem}
+.stats-header .section-label{color:var(--green-accent)}
+.stats-header .section-title{color:var(--white)}
+.stats-tabs{display:flex;justify-content:center;gap:1rem;margin-bottom:3rem;flex-wrap:wrap}
+.stats-tab{background:transparent;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;padding:0.6rem 1.8rem;cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;text-transform:uppercase}
+.stats-tab.active{background:var(--green-accent);border-color:var(--green-accent);color:var(--white)}
+.stats-panel{display:none}
+.stats-panel.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem}
+.stat-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:2.5rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green-accent);transform:scaleX(0);transition:transform 0.4s}
+.stat-box:hover::before{transform:scaleX(1)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:700;color:var(--green-accent);line-height:1;display:block}
+.stat-label{font-size:0.78rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.6rem;line-height:1.4}
+.stat-box.special .stat-num{font-size:1.8rem}
+
+/* GALERIE */
+#galerie{background:var(--white)}
+.gallery-intro{max-width:600px;margin-bottom:3rem}
+.gallery-intro p{font-size:1rem;color:var(--text2);line-height:1.8}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.gal-item{position:relative;overflow:hidden;cursor:pointer;aspect-ratio:4/3}
+.gal-item.large{grid-column:span 2;aspect-ratio:16/9}
+.gal-bg{width:100%;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:transform 0.5s ease}
+.gal-item:hover .gal-bg{transform:scale(1.05)}
+.gal-overlay{position:absolute;inset:0;background:rgba(28,92,64,0);transition:background 0.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+.gal-item:hover .gal-overlay{background:rgba(28,92,64,0.75)}
+.gal-overlay-content{opacity:0;transform:translateY(10px);transition:all 0.3s;text-align:center}
+.gal-item:hover .gal-overlay-content{opacity:1;transform:translateY(0)}
+.gal-overlay-label{font-size:0.82rem;font-weight:600;color:var(--white);letter-spacing:0.08em;text-transform:uppercase}
+.gal-overlay-sub{font-size:0.72rem;color:rgba(255,255,255,0.75);margin-top:0.3rem}
+.gal-bg img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Galerie lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(20,50,35,0.92);z-index:2000;align-items:center;justify-content:center;padding:2rem}
+.lightbox.open{display:flex}
+.lightbox-inner{position:relative;max-width:860px;width:100%;background:var(--white)}
+.lightbox-img{width:100%;height:460px;display:flex;align-items:center;justify-content:center}
+.lightbox-info{padding:1.5rem 2rem;border-top:1px solid var(--gray)}
+.lightbox-info h4{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--green-dark);margin-bottom:0.3rem}
+.lightbox-info p{font-size:0.87rem;color:var(--text2)}
+.lightbox-close{position:absolute;top:-2.5rem;right:0;background:none;border:none;color:var(--white);cursor:pointer;font-size:1.5rem;line-height:1;padding:0.5rem}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:var(--white);width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;backdrop-filter:blur(4px)}
+.lightbox-nav:hover{background:rgba(255,255,255,0.3)}
+.lb-prev{left:-56px}
+.lb-next{right:-56px}
+
+/* TECHNOLOGIE */
+#technologie{background:var(--green-pale)}
+
+
+/* CONTACT */
+#contact{background:var(--white)}
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:5rem;margin-top:3rem}
+.contact-block{margin-bottom:2.5rem}
+.contact-block-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--green-dark);margin-bottom:1.2rem;padding-bottom:0.6rem;border-bottom:1px solid var(--gray)}
+.contact-item{display:flex;align-items:center;gap:0.85rem;margin-bottom:0.85rem;color:var(--text2);font-size:0.9rem}
+.contact-item svg{color:var(--green-accent);flex-shrink:0}
+.contact-item a{color:var(--text2);transition:color 0.2s}
+.contact-item a:hover{color:var(--green-dark)}
+.map-link{display:inline-flex;align-items:center;gap:0.6rem;margin-top:1.5rem;background:var(--green);color:var(--white);padding:0.75rem 1.5rem;font-size:0.83rem;font-weight:500;letter-spacing:0.06em;transition:background 0.2s}
+.map-link:hover{background:var(--green-dark)}
+.map-link svg{flex-shrink:0}
+
+/* FORM */
+.form-field{margin-bottom:1.2rem}
+.form-field label{display:block;font-size:0.78rem;font-weight:600;color:var(--green-dark);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.45rem}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:0.75rem 1rem;border:1px solid var(--gray);background:var(--green-pale);font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--text);outline:none;transition:border-color 0.2s;border-radius:0}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--green-accent);background:var(--white)}
+.form-field textarea{resize:vertical;min-height:130px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-btn{width:100%;background:var(--green);color:var(--white);border:none;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;letter-spacing:0.1em;padding:1rem;cursor:pointer;transition:background 0.2s;text-transform:uppercase;margin-top:0.5rem}
+.form-btn:hover{background:var(--green-dark)}
+.form-success{display:none;background:var(--green-pale);border:1px solid var(--green-accent);padding:1.2rem;text-align:center;color:var(--green-dark);font-size:0.9rem;margin-top:1rem}
+.form-success.show{display:block}
+
+/* FOOTER */
+footer{background:var(--green-dark);padding:4rem 5% 2rem;border-top:1px solid rgba(91,191,138,0.2)}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr;gap:4rem;margin-bottom:3rem}
+.footer-brand .nav-logo-text{color:var(--white)}
+.footer-brand .nav-logo-bar{background:var(--green-accent)}
+.footer-brand p{font-size:0.88rem;color:rgba(255,255,255,0.45);line-height:1.7;margin-top:1rem;max-width:280px}
+.footer-col h4{font-size:0.72rem;letter-spacing:0.2em;color:var(--green-accent);text-transform:uppercase;font-family:'DM Sans',sans-serif;margin-bottom:1rem}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:0.6rem}
+.footer-col ul a{font-size:0.87rem;color:rgba(255,255,255,0.45);transition:color 0.2s}
+.footer-col ul a:hover{color:var(--green-accent)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:0.78rem;color:rgba(255,255,255,0.3)}
+.footer-green-line{width:32px;height:2px;background:var(--green-accent)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .about-grid{grid-template-columns:1fr;gap:3rem}
+  .contact-grid{grid-template-columns:1fr;gap:3rem}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:2.5rem}
+  .gallery-grid{grid-template-columns:1fr 1fr}
+  .gal-item.large{grid-column:span 2}
+  .lb-prev{left:-44px}.lb-next{right:-44px}
+}
+@media(max-width:768px){
+  .nav-menu{display:none}
+  .burger{display:flex}
+  .section-pad{padding:4rem 5%}
+  .hero-badges{display:none}
+  .personnel-grid{grid-template-columns:1fr!important}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr;gap:2rem}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+  .creation-boxes{grid-template-columns:1fr 1fr}
+  .gallery-grid{grid-template-columns:1fr 1fr}
+  .gal-item.large{grid-column:span 2}
+  .lightbox-inner{max-width:95vw}
+  .lb-prev{left:4px}.lb-next{right:4px}
+  .lightbox-img{height:240px}
+}
+@media(max-width:480px){
+  .personnel-grid{grid-template-columns:1fr!important}
+  .services-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:1fr}
+  .gal-item.large{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="36" height="36" viewBox="0 0 100 100" style="flex-shrink:0"><rect width="100" height="100" rx="20" fill="var(--green)"/><path d="M50 20v60M20 50h60" stroke="white" stroke-width="12" stroke-linecap="round"/></svg>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span class="nav-logo-text">SAINT-ALEXANDRE</span>
+          <div class="nav-logo-bar"></div>
+          <span class="nav-logo-sub">Centre Médical</span>
+        </div>
+      </div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="#home" data-i18n="nav-home">Accueil</a></li>
+      <li><a href="#services" data-i18n="nav-services">Services</a></li>
+      <li><a href="#personnel" data-i18n="nav-personnel">Personnel</a></li>
+      <li><a href="#article" data-i18n="nav-article">Article</a></li>
+      <li><a href="#galerie" data-i18n="nav-gallery">Galerie</a></li>
+      <li><a href="#contact" data-i18n="nav-contact">Contact</a></li>
+      <li><a href="#contact" class="nav-cta" data-i18n="nav-rdv">Prendre RDV</a></li>
+      <li><button class="lang-toggle" onclick="toggleLang()" aria-label="Langue">FR</button></li>
+    </ul>
+    <div class="burger" onclick="toggleMenu()" aria-label="Menu" role="button">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#home" onclick="closeMenu()" data-i18n="nav-home">Accueil</a></li>
+    <li><a href="#services" onclick="closeMenu()" data-i18n="nav-services">Services</a></li>
+    <li><a href="#personnel" onclick="closeMenu()" data-i18n="nav-personnel">Personnel</a></li>
+    <li><a href="#article" onclick="closeMenu()" data-i18n="nav-article">Article</a></li>
+    <li><a href="#galerie" onclick="closeMenu()" data-i18n="nav-gallery">Galerie</a></li>
+    <li><a href="#contact" onclick="closeMenu()" data-i18n="nav-contact">Contact</a></li>
+    <li><a href="#contact" onclick="closeMenu()" style="color:var(--green-accent)" data-i18n="nav-rdv">Prendre RDV</a></li>
+    <li><button class="lang-toggle" onclick="closeMenu();toggleLang()" aria-label="Langue" style="width:100%;text-align:center;margin-top:0.5rem">FR</button></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section id="home">
+  <div class="slide active">
+    <div class="slide-bg" style="background-image:url('images/gnd.avif')"></div><div class="slide-overlay"></div>
+    <div class="slide-content">
+      <h1 class="slide-title" data-i18n="hero1-title">Votre Santé,<br><span>Notre Priorité</span></h1>
+      <p class="slide-sub" data-i18n="hero1-sub">Une équipe dévouée, des soins de qualité, une écoute attentive. Nous sommes là pour vous et votre famille.</p>
+      <a href="#services" class="hero-btn" data-i18n="hero1-btn">Découvrir nos services</a>
+    </div>
+  </div>
+  <div class="slide">
+    <div class="slide-bg" style="background-image:url('images/hand.jpg')"></div><div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-badge" data-i18n="hero3-badge">Des Spécialistes à votre écoute</div>
+      <h1 class="slide-title" data-i18n="hero3-title">Excellence <span>Médicale</span></h1>
+      <p class="slide-sub" data-i18n="hero3-sub">Un plateau technique moderne et des spécialistes qualifiés pour une prise en charge complète de toute la famille.</p>
+      <a href="#specialites" class="hero-btn" data-i18n="hero3-btn">Nos spécialités</a>
+    </div>
+  </div>
+  <div class="slide-dots">
+    <button class="dot active" onclick="goSlide(0)" aria-label="Slide 1"></button>
+    <button class="dot" onclick="goSlide(1)" aria-label="Slide 2"></button>
+  </div>
+  <div class="hero-badges">
+    <div class="hero-badge-pill" data-i18n="hero-badge1">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Centre Médical
+    </div>
+    <div class="hero-badge-pill" data-i18n="hero-badge3">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>Ouvert 24h/24 · 7j/7
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-pad">
+  <div class="section-label reveal" data-i18n="about-label">À propos de nous</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="about-title">Une Institution au Service<br>de la Santé et de l'Avenir</h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="about-grid">
+    <div class="about-text reveal reveal-delay-2">
+      <p data-i18n="about-p1">Saint-Alexandre est un centre médical de référence à Yaoundé (TotalEnergies, Odza borne 10), au Cameroun, qui conjugue expertise médicale et soins de haut niveau. Fondée sur des valeurs d'excellence et d'humanisme, notre institution place le patient au cœur de ses préoccupations.</p>
+      <p data-i18n="about-p2">Notre Centre Médical offre une prise en charge globale et multidisciplinaire, avec des spécialistes qualifiés et des équipements modernes pour répondre à tous vos besoins de santé.</p>
+      <p data-i18n="about-p3">Implantés au cœur de Yaoundé, nous desservons une large communauté et nous engageons à rendre des soins de qualité accessibles à tous.</p>
+      <div class="about-values">
+        <span class="value-tag" data-i18n="value1">Excellence</span>
+        <span class="value-tag" data-i18n="value2">Accessibilité</span>
+        <span class="value-tag" data-i18n="value3">Humanisme</span>
+        <span class="value-tag" data-i18n="value4">Rigueur</span>
+        <span class="value-tag" data-i18n="value5">Innovation</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div class="creation-boxes">
+        <div class="creation-box"><span class="year">2022</span><div class="label" data-i18n="creation-medi">Centre Médical fondé</div></div>
+      </div>
+      <div class="about-card" style="margin-top:1.5rem">
+        <div class="about-card-item">
+          <div class="about-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="about-card-text"><strong data-i18n="about-card1-title">Localisation</strong><span data-i18n="about-card1-desc">Yaoundé, Cameroun<br>Accessible depuis tous les quartiers</span></div>
+        </div>
+        <div class="about-card-item">
+          <div class="about-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="about-card-text"><strong data-i18n="about-card2-title">Depuis 2022</strong><span data-i18n="about-card2-desc">Plus de 04 ans au service de la santé et du bien-être de notre communauté</span></div>
+        </div>
+        <div class="about-card-item">
+          <div class="about-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="about-card-text"><strong data-i18n="about-card3-title">Notre Mission</strong><span data-i18n="about-card3-desc">Offrir des soins de qualité et accessibles à tous au cœur de Yaoundé</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section-pad">
+  <div class="section-label reveal" data-i18n="services-label">Services</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="services-title">Services <span>Disponibles</span></h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="services-intro reveal reveal-delay-2">
+    <p data-i18n="services-intro">Notre centre médical met à votre disposition une gamme complète de services pour répondre à tous vos besoins de santé, avec une équipe disponible 24h/24 et 7j/7.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="service-card-name" data-i18n="serv-acceuil">Accueil &amp; Urgences 24h/24 7j/7</span></div>
+    <div class="service-card reveal reveal-delay-1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="service-card-name" data-i18n="serv-general">Médecine Générale</span></div>
+    <div class="service-card reveal reveal-delay-2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span class="service-card-name" data-i18n="serv-hospitalisation">Hospitalisation</span></div>
+    <div class="service-card reveal reveal-delay-3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/></svg><span class="service-card-name" data-i18n="serv-petite-chir">Petite Chirurgie</span></div>
+    <div class="service-card reveal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span class="service-card-name" data-i18n="serv-observation">Mise en Observation</span></div>
+    <div class="service-card reveal reveal-delay-1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg><span class="service-card-name" data-i18n="serv-maternite">Maternité</span></div>
+    <div class="service-card reveal reveal-delay-2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg><span class="service-card-name" data-i18n="serv-vaccination">Vaccination</span></div>
+    <div class="service-card reveal reveal-delay-3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/></svg><span class="service-card-name" data-i18n="serv-echographie">Échographie</span></div>
+  </div>
+</section>
+
+<!-- NOS SPÉCIALITÉS -->
+<section id="specialites" class="section-pad" style="background:var(--green-pale)">
+  <div class="section-label reveal" data-i18n="specialites-label">Nos Spécialités</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="specialites-title">Des Spécialistes<br><span>à Votre Service</span></h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="services-intro reveal reveal-delay-2">
+    <p data-i18n="specialites-intro">Notre centre médical réunit des médecins spécialistes de premier plan pour une prise en charge complète et de qualité dans toutes les disciplines.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg><span class="service-card-name" data-i18n="spec-cardio">Cardiologie</span></div>
+    <div class="service-card reveal reveal-delay-1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span class="service-card-name" data-i18n="spec-pediatrie">Pédiatrie</span></div>
+    <div class="service-card reveal reveal-delay-2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg><span class="service-card-name" data-i18n="spec-gyneco">Gynécologie-Obstétrique</span></div>
+    <div class="service-card reveal reveal-delay-3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12c0 1.654.985 3.187 2.5 4.144V20a1 1 0 001 1h11a1 1 0 001-1v-3.856C20.015 15.187 21 13.654 21 12c0-4.97-4.03-9-9-9s-9 4.03-9 9z"/></svg><span class="service-card-name" data-i18n="spec-orl">ORL</span></div>
+    <div class="service-card reveal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/></svg><span class="service-card-name" data-i18n="spec-ophtalmo">Ophtalmologie</span></div>
+    <div class="service-card reveal reveal-delay-1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="service-card-name" data-i18n="spec-dermato">Dermatologie</span></div>
+    <div class="service-card reveal reveal-delay-2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg><span class="service-card-name" data-i18n="spec-diabeto">Diabétologie</span></div>
+    <div class="service-card reveal reveal-delay-3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm0 0v20M2 12h20"/><path d="M12 2a14.5 14.5 0 014 10 14.5 14.5 0 01-4 10"/><path d="M12 2a14.5 14.5 0 00-4 10 14.5 14.5 0 004 10"/></svg><span class="service-card-name" data-i18n="spec-neuro">Neurologie</span></div>
+    <div class="service-card reveal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1"/><path d="M11 14H3a2 2 0 01-2-2V6a2 2 0 012-2h11a2 2 0 012 2v5"/></svg><span class="service-card-name" data-i18n="spec-rhuma">Rhumatologie</span></div>
+  </div>
+</section>
+
+<!-- ARTICLE PALUDISME -->
+<section id="article" class="section-pad">
+  <div class="section-label reveal" data-i18n="article-label">Santé Publique</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="article-title">Paludisme : <span>Prévention et Traitement</span></h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="about-grid" style="margin-top:3rem">
+    <div class="about-text reveal">
+      <p data-i18n="article-p1">Le paludisme (ou malaria) est une maladie infectieuse potentiellement grave, transmise par la piqûre d'un moustique Anophèle infecté. Il reste l'une des principales causes de consultation dans les formations sanitaires au Cameroun et en Afrique subsaharienne.</p>
+      <p data-i18n="article-p2"><strong>Symptômes courants :</strong> Fièvre élevée, frissons intenses, maux de tête, courbatures, fatigue générale et nausées. En l'absence de traitement rapide, le paludisme peut évoluer vers des formes graves mettant en jeu le pronostic vital.</p>
+      <p data-i18n="article-p3"><strong>Prévention :</strong> Le port de vêtements longs, l'utilisation de moustiquaires imprégnées et de répulsifs anti-moustiques, ainsi que l'assainissement de l'environnement sont essentiels pour se protéger.</p>
+      <p data-i18n="article-p4"><strong>Traitement :</strong> Au Centre Médical Saint-Alexandre, nous proposons un dépistage rapide du paludisme (test diagnostique rapide ou goutte épaisse) et une prise en charge adaptée selon le stade et la sévérité, conformément aux recommandations du Programme National de Lutte contre le Paludisme.</p>
+      <div class="about-values" style="margin-top:1.5rem;gap:0.4rem">
+        <span class="value-tag" data-i18n="article-tag1">Dépistage Rapide</span>
+        <span class="value-tag" data-i18n="article-tag2">Traitement Efficace</span>
+        <span class="value-tag" data-i18n="article-tag3">Suivi Personnalisé</span>
+        <span class="value-tag" data-i18n="article-tag4">Prévention</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2" style="display:flex;flex-direction:column;gap:1rem">
+      <div style="width:100%;height:280px;background:url('images/moustique.webp') center/cover no-repeat;border-radius:2px;overflow:hidden"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div style="background:var(--green-pale);border:1px solid var(--gray);padding:1.2rem;text-align:center">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--green-accent)">90%</div>
+          <div style="font-size:0.75rem;color:var(--text2);letter-spacing:0.05em" data-i18n="article-stat1">Des cas pris en charge avec succès</div>
+        </div>
+        <div style="background:var(--green-pale);border:1px solid var(--gray);padding:1.2rem;text-align:center">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--green-accent)">15 min</div>
+          <div style="font-size:0.75rem;color:var(--text2);letter-spacing:0.05em" data-i18n="article-stat2">Test de dépistage rapide</div>
+        </div>
+      </div>
+      <div style="background:var(--green-dark);padding:1.5rem;text-align:center">
+        <p style="color:rgba(255,255,255,0.75);font-size:0.85rem;line-height:1.6" data-i18n="article-cta">Vous présentez des symptômes ? Venez consulter dès aujourd'hui. Le dépistage précoce sauve des vies.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONNEL -->
+<section id="personnel" class="section-pad" style="background:var(--green-pale)">
+  <div class="section-label reveal" data-i18n="personnel-label">Notre Équipe</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="personnel-title">Une Équipe <span>Compétente et Dévouée</span></h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="services-intro reveal reveal-delay-2">
+    <p data-i18n="personnel-intro">Notre force réside dans notre équipe. Des professionnels de santé qualifiés, engagés et animés par la même mission : votre bien-être.</p>
+  </div>
+  <div class="personnel-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem">
+    <div class="reveal" style="background:var(--white);border:1px solid var(--gray);padding:2rem">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
+        <div style="width:48px;height:48px;background:var(--green-light);display:flex;align-items:center;justify-content:center;color:var(--green)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--green-dark)" data-i18n="personnel-med-title">Personnel Médical</h3>
+      </div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">1</div><div class="about-card-text"><strong data-i18n="personnel-med1-title">Médecins Généralistes</strong><span data-i18n="personnel-med1-desc">Consultations de premier recours, suivi des pathologies courantes et orientation spécialisée</span></div></div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">2</div><div class="about-card-text"><strong data-i18n="personnel-med2-title">Médecins Spécialistes</strong><span data-i18n="personnel-med2-desc">Cardiologues, pédiatres, gynécologues, ophtalmologues et autres spécialistes de référence</span></div></div>
+    </div>
+    <div class="reveal reveal-delay-1" style="background:var(--white);border:1px solid var(--gray);padding:2rem">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
+        <div style="width:48px;height:48px;background:var(--green-light);display:flex;align-items:center;justify-content:center;color:var(--green)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--green-dark)" data-i18n="personnel-para-title">Personnel Paramédical</h3>
+      </div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">1</div><div class="about-card-text"><strong data-i18n="personnel-para1-title">Infirmiers Diplômés</strong><span data-i18n="personnel-para1-desc">Soins infirmiers, administration des traitements et suivi des patients hospitalisés</span></div></div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">2</div><div class="about-card-text"><strong data-i18n="personnel-para2-title">Aides-Soignantes</strong><span data-i18n="personnel-para2-desc">Assistance aux soins quotidiens, hygiène et confort des patients</span></div></div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">3</div><div class="about-card-text"><strong data-i18n="personnel-para3-title">Auxiliaires de Vie</strong><span data-i18n="personnel-para3-desc">Accompagnement des personnes dépendantes et soutien aux activités quotidiennes</span></div></div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">4</div><div class="about-card-text"><strong data-i18n="personnel-para4-title">Techniciens de Laboratoire</strong><span data-i18n="personnel-para4-desc">Analyses biologiques, prélèvements et diagnostic en laboratoire</span></div></div>
+      <div class="about-card-item"><div class="about-icon" style="background:var(--green-light);color:var(--green);width:36px;height:36px;font-size:0.8rem;font-weight:700">5</div><div class="about-card-text"><strong data-i18n="personnel-para5-title">Agents d'Entretien</strong><span data-i18n="personnel-para5-desc">Hygiène et stérilisation des locaux pour un environnement sain et sécurisé</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATISTIQUES -->
+<section id="statistiques" class="section-pad">
+  <div class="stats-header">
+    <div class="section-label" data-i18n="stats-label">Chiffres clés</div>
+    <h2 class="section-title" data-i18n="stats-title">Saint-Alexandre en Chiffres</h2>
+    <div class="green-line center"></div>
+  </div>
+  <div class="stats-grid" style="max-width:900px;margin:0 auto">
+    <div class="stat-box"><span class="stat-num" data-target="04">0</span><div class="stat-label" data-i18n="stat-years">Années<br>d'Expérience</div></div>
+    <div class="stat-box"><span class="stat-num" data-target="15" data-suffix="+">0</span><div class="stat-label" data-i18n="stat-specialists">Spécialistes<br>Qualifiés</div></div>
+    <div class="stat-box"><span class="stat-num" data-target="5000" data-suffix="+" data-format="k">0</span><div class="stat-label" data-i18n="stat-patients">Patients Pris<br>en Charge</div></div>
+    <div class="stat-box special"><span class="stat-num">24h/24<br>7j/7</span><div class="stat-label" data-i18n="stat-availability">Disponibilité<br>Permanente</div></div>
+    <div class="stat-box"><span class="stat-num" data-target="400" data-suffix="+" data-format="k">0</span><div class="stat-label" data-i18n="stat-exams">Examens<br>Réalisés</div></div>
+  </div>
+</section>
+
+<!-- ACTUALITÉS -->
+<section id="galerie" class="section-pad">
+  <div class="section-label reveal" data-i18n="gallery-label">Actualités</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="gallery-title">Notre Centre en Images</h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="gallery-intro reveal reveal-delay-2">
+    <p data-i18n="gallery-intro">Découvrez nos installations, nos équipements et les moments forts de la vie de notre centre médical.</p>
+  </div>
+
+  <div class="gallery-grid reveal" id="galleryGrid">
+
+    <div class="gal-item large" data-index="0" onclick="openLightbox(0)">
+      <div class="gal-bg"><img src="images/enter.jpg" alt="Entrée du Centre Médical" loading="lazy"></div>
+      <div class="gal-overlay">
+        <div class="gal-overlay-content">
+          <div class="gal-overlay-label" data-i18n="gal-label1">Entrée du Centre Médical</div>
+          <div class="gal-overlay-sub" data-i18n="gal-sub1">Un accueil chaleureux vous attend</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gal-item" data-index="1" onclick="openLightbox(1)">
+      <div class="gal-bg"><img src="images/sale.jpg" alt="Salle d'hospitalisation" loading="lazy"></div>
+      <div class="gal-overlay">
+        <div class="gal-overlay-content">
+          <div class="gal-overlay-label" data-i18n="gal-label2">Salle d'Hospitalisation</div>
+          <div class="gal-overlay-sub" data-i18n="gal-sub2">Confort et sérénité pour votre rétablissement</div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" onclick="closeLightboxBtn()" aria-label="Fermer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <button class="lightbox-nav lb-prev" onclick="navLightbox(-1)" aria-label="Précédent">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+      </button>
+      <button class="lightbox-nav lb-next" onclick="navLightbox(1)" aria-label="Suivant">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
+      </button>
+      <div class="lightbox-img" id="lbImg"></div>
+      <div class="lightbox-info">
+        <h4 id="lbTitle"></h4>
+        <p id="lbSub"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- CONTACT -->
+<section id="contact" class="section-pad">
+  <div class="section-label reveal" data-i18n="contact-label">Contact</div>
+  <h2 class="section-title reveal reveal-delay-1" data-i18n="contact-title">Nous Contacter</h2>
+  <div class="green-line reveal reveal-delay-2"></div>
+  <div class="contact-grid">
+    <div class="reveal reveal-delay-2">
+      <div class="contact-block">
+        <div class="contact-block-title" data-i18n="contact-medi-title">Centre Médical</div>
+        <div class="contact-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.67 19.79 19.79 0 01.1 5.06 2 2 0 012.03 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 10.1a16 16 0 006 6l.41-.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 18.02z"/></svg><a href="tel:+237657510910">+237 657 510 910</a></div>
+        <div class="contact-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.67 19.79 19.79 0 01.1 5.06 2 2 0 012.03 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 10.1a16 16 0 006 6l.41-.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 18.02z"/></svg><a href="tel:+237654855212">+237 654 855 212</a></div>
+        <div class="contact-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:cm@saintalexandre.com">cm@saintalexandre.com</a></div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-block-title" data-i18n="contact-loc-title">Localisation</div>
+        <div class="contact-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-i18n="contact-location">TotalEnergies, Odza borne 10</span></div>
+        <a class="map-link" href="https://www.google.com/maps/search/Centre Médical Saint Alexandre" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span data-i18n="contact-map">Voir sur Google Maps</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div style="background:var(--green-pale);border:1px solid var(--gray);padding:2.5rem">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--green-dark);margin-bottom:1.5rem" data-i18n="contact-form-heading">Envoyer un Message</h3>
+        <div class="form-row">
+          <div class="form-field"><label data-i18n="form-name">Nom complet</label><input type="text" id="f-name" placeholder="Votre nom"></div>
+          <div class="form-field"><label data-i18n="form-email">Email</label><input type="email" id="f-email" placeholder="votre@email.com"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field"><label data-i18n="form-phone">Téléphone</label><input type="tel" id="f-phone" placeholder="+237 000 000 000"></div>
+          <div class="form-field"><label data-i18n="form-subject">Sujet</label><select id="f-sujet"><option value="" data-i18n="form-select">Sélectionner...</option><option data-i18n="form-opt1">Centre Médical</option><option data-i18n="form-other">Autre</option></select></div>
+        </div>
+        <div class="form-field"><label data-i18n="form-message">Message</label><textarea id="f-message" placeholder="Votre message..."></textarea></div>
+        <button class="form-btn" onclick="submitForm()" data-i18n="form-btn">Envoyer le Message</button>
+        <div class="form-success" id="form-success" data-i18n="form-success">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--green-accent);vertical-align:middle;margin-right:8px"><polyline points="20,6 9,17 4,12"/></svg>
+          Votre message a été envoyé. Nous vous répondrons dans les plus brefs délais.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo">
+        <span class="nav-logo-text">SAINT-ALEXANDRE</span>
+        <div class="nav-logo-bar"></div>
+        <span class="nav-logo-sub" style="color:rgba(255,255,255,0.3)">Centre Médical</span>
+      </div>
+      <p data-i18n="footer-desc">Votre santé, notre engagement. Une institution de confiance au service de la communauté de Yaoundé depuis 2022.</p>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer-nav-title">Navigation</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#specialites">Spécialités</a></li>
+        <li><a href="#personnel">Personnel</a></li>
+        <li><a href="#galerie">Actualités</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer-contact-title">Contact Rapide</h4>
+      <ul>
+        <li><a href="tel:+237657510910">+237 657 510 910</a></li>
+        <li><a href="tel:+237654855212">+237 654 855 212</a></li>
+        <li><a href="mailto:cm@saintalexandre.com">cm@saintalexandre.com</a></li>
+        <li style="color:rgba(255,255,255,0.45);font-size:0.87rem;margin-top:0.5rem">TotalEnergies, Odza borne 10</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p data-i18n="footer-copy">© 2026 Saint-Alexandre — Tous droits réservés</p>
+    <div class="footer-green-line"></div>
+    <p data-i18n="footer-tagline">Conçu avec soin pour notre communauté</p>
+  </div>
+</footer>
+
+<script>
+// NAVBAR
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20)
+})
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open')}
+function closeMenu(){document.getElementById('mobileMenu').classList.remove('open')}
+
+// SLIDER
+let currentSlide=0,slideTimer
+const slides=document.querySelectorAll('.slide')
+const dots=document.querySelectorAll('.dot')
+function goSlide(n){
+  slides[currentSlide].classList.remove('active')
+  dots[currentSlide].classList.remove('active')
+  currentSlide=n
+  slides[currentSlide].classList.add('active')
+  dots[currentSlide].classList.add('active')
+  clearInterval(slideTimer)
+  slideTimer=setInterval(()=>goSlide((currentSlide+1)%slides.length),4500)
+}
+slideTimer=setInterval(()=>goSlide((currentSlide+1)%slides.length),4500)
+
+// SCROLL REVEAL
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'})
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el))
+
+// STAT COUNTERS
+function animateCounter(el){
+  const target=parseInt(el.dataset.target)||0
+  const suffix=el.dataset.suffix||''
+  const fmt=el.dataset.format||''
+  const step=target/125
+  let current=0
+  const timer=setInterval(()=>{
+    current=Math.min(current+step,target)
+    let display=Math.round(current)
+    if(fmt==='k')display=display>=1000?(display/1000).toFixed(0)+'K':display
+    el.textContent=display+suffix
+    if(current>=target)clearInterval(timer)
+  },16)
+}
+let statsAnimated=false
+const statsObs=new IntersectionObserver((entries)=>{
+  if(entries[0].isIntersecting&&!statsAnimated){
+    statsAnimated=true
+    document.querySelectorAll('[data-target]').forEach(animateCounter)
+  }
+},{threshold:0.3})
+const statsSection=document.getElementById('statistiques')
+if(statsSection)statsObs.observe(statsSection)
+
+// LIGHTBOX DATA
+const galleryData=[
+  {title:"Entrée du Centre Médical",sub:'Un accueil chaleureux vous attend',img:'images/enter.jpg'},
+  {title:"Salle d'Hospitalisation",sub:'Confort et sérénité pour votre rétablissement',img:'images/sale.jpg'}
+]
+let currentLb=0
+function openLightbox(idx){
+  currentLb=idx
+  renderLb()
+  document.getElementById('lightbox').classList.add('open')
+  document.body.style.overflow='hidden'
+}
+function renderLb(){
+  const d=galleryData[currentLb]
+  document.getElementById('lbImg').innerHTML=`<img src="${d.img}" alt="${d.title}" style="width:100%;height:100%;object-fit:cover;display:block">`
+  document.getElementById('lbTitle').textContent=d.title
+  document.getElementById('lbSub').textContent=d.sub
+}
+function navLightbox(dir){
+  currentLb=(currentLb+dir+galleryData.length)%galleryData.length
+  renderLb()
+}
+function closeLightbox(e){if(e.target===document.getElementById('lightbox'))closeLightboxBtn()}
+function closeLightboxBtn(){
+  document.getElementById('lightbox').classList.remove('open')
+  document.body.style.overflow=''
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return
+  if(e.key==='ArrowLeft')navLightbox(-1)
+  if(e.key==='ArrowRight')navLightbox(1)
+  if(e.key==='Escape')closeLightboxBtn()
+})
+
+// FORM
+function submitForm(){
+  const name=document.getElementById('f-name').value.trim()
+  const email=document.getElementById('f-email').value.trim()
+  const msg=document.getElementById('f-message').value.trim()
+  if(!name||!email||!msg){alert("Veuillez remplir le nom, l'email et le message.");return}
+  const btn=document.querySelector('.form-btn')
+  btn.textContent='Envoi en cours...'
+  btn.disabled=true
+  setTimeout(()=>{
+    document.getElementById('form-success').classList.add('show')
+    document.getElementById('f-name').value=''
+    document.getElementById('f-email').value=''
+    document.getElementById('f-phone').value=''
+    document.getElementById('f-sujet').value=''
+    document.getElementById('f-message').value=''
+    btn.textContent='Envoyer le Message'
+    btn.disabled=false
+  },1200)
+}
+
+// TRANSLATIONS
+const langData={fr:{},en:{
+  'nav-home':'Home','nav-services':'Services','nav-personnel':'Staff','nav-article':'Article','nav-gallery':'Gallery','nav-contact':'Contact','nav-rdv':'Book Appointment',
+  'hero1-badge':'Saint-Alexandre Medical Center','hero1-title':'Your Health,<br><span>Our Priority</span>','hero1-sub':'A dedicated team, quality care, attentive listening. We are here for you and your family.','hero1-btn':'Our services',
+  'hero2-badge':'Emergency 24/7 · 7 days','hero2-title':'Emergency <span>Care</span>','hero2-sub':'Our team is ready to welcome you anytime. Fast and effective care when you need it.','hero2-btn':'See our services',
+  'hero3-badge':'Specialists at your service','hero3-title':'Medical <span>Excellence</span>','hero3-sub':'Modern equipment and qualified specialists for comprehensive care for the whole family.','hero3-btn':'Our specialties',
+  'hero-badge1':'Medical Center','hero-badge3':'Open 24/7 · 7 days',
+  'about-label':'About Us','about-title':'An Institution Serving<br>Health and the Future','about-p1':'Saint-Alexandre is a leading medical center in Yaoundé, Cameroon, combining medical expertise with high-quality care. Founded on values of excellence and humanism, our institution places the patient at the heart of its concerns.','about-p2':'Our Medical Center offers comprehensive multidisciplinary care, with qualified specialists and modern equipment to meet all your healthcare needs.','about-p3':'Located in the heart of Yaoundé, we serve a broad community and are committed to making quality care accessible to all.',
+  'value1':'Excellence','value2':'Accessibility','value3':'Humanism','value4':'Rigor','value5':'Innovation',
+  'creation-medi':'Medical Center founded',
+  'about-card1-title':'Location','about-card1-desc':'Yaoundé, Cameroon<br>Accessible from all neighborhoods',
+  'about-card2-title':'Since 2022','about-card2-desc':'Over 04 years serving the health and well-being of our community',
+  'about-card3-title':'Our Mission','about-card3-desc':'Provide quality, accessible care for everyone in the heart of Yaoundé',
+  'services-label':'Services','services-title':'Available <span>Services</span>','services-intro':'Our medical center offers a full range of services to meet all your health needs, with a team available 24/7.',
+  'serv-acceuil':'Reception &amp; Emergency 24/7','serv-general':'General Medicine','serv-hospitalisation':'Hospitalization','serv-petite-chir':'Minor Surgery','serv-observation':'Observation','serv-maternite':'Maternity','serv-vaccination':'Vaccination','serv-echographie':'Ultrasound',
+  'specialites-label':'Our Specialties','specialites-title':'Specialists<br><span>at Your Service</span>','specialites-intro':'Our medical center brings together leading specialists for comprehensive, quality care in all disciplines.',
+  'spec-cardio':'Cardiology','spec-pediatrie':'Pediatrics','spec-gyneco':'Gynecology-Obstetrics','spec-orl':'ENT','spec-ophtalmo':'Ophthalmology','spec-dermato':'Dermatology','spec-diabeto':'Diabetology','spec-neuro':'Neurology','spec-rhuma':'Rheumatology',
+  'article-label':'Public Health','article-title':'Malaria: <span>Prevention and Treatment</span>','article-p1':'Malaria is a potentially serious infectious disease transmitted by the bite of an infected Anopheles mosquito. It remains one of the leading causes of consultation in health facilities in Cameroon and sub-Saharan Africa.','article-p2':'<strong>Common symptoms:</strong> High fever, intense chills, headache, body aches, general fatigue, and nausea. Without rapid treatment, malaria can progress to severe forms that are life-threatening.','article-p3':'<strong>Prevention:</strong> Wearing long clothing, using impregnated mosquito nets and insect repellents, as well as environmental sanitation are essential for protection.','article-p4':'<strong>Treatment:</strong> At Saint-Alexandre Medical Center, we offer rapid malaria screening (rapid diagnostic test or thick smear) and appropriate care according to the stage and severity, in accordance with national recommendations.',
+  'article-tag1':'Rapid Screening','article-tag2':'Effective Treatment','article-tag3':'Personalized Follow-up','article-tag4':'Prevention',
+  'article-stat1':'Cases successfully treated','article-stat2':'Rapid screening test','article-cta':'Have symptoms? Come consult today. Early screening saves lives.',
+  'personnel-label':'Our Team','personnel-title':'A Skilled <span>and Dedicated Team</span>','personnel-intro':'Our strength lies in our team. Qualified health professionals, committed and driven by the same mission: your well-being.',
+  'personnel-med-title':'Medical Staff','personnel-med1-title':'General Practitioners','personnel-med1-desc':'First-line consultations, follow-up of common pathologies and specialized referrals','personnel-med2-title':'Specialist Doctors','personnel-med2-desc':'Cardiologists, pediatricians, gynecologists, ophthalmologists and other leading specialists',
+  'personnel-para-title':'Paramedical Staff','personnel-para1-title':'Registered Nurses','personnel-para1-desc':'Nursing care, treatment administration and monitoring of hospitalized patients','personnel-para2-title':'Nursing Assistants','personnel-para2-desc':'Assistance with daily care, hygiene and patient comfort','personnel-para3-title':'Life Assistants','personnel-para3-desc':'Support for dependent people and assistance with daily activities','personnel-para4-title':'Laboratory Technicians','personnel-para4-desc':'Biological analyses, sampling and laboratory diagnosis','personnel-para5-title':'Cleaning Agents','personnel-para5-desc':'Hygiene and sterilization of premises for a healthy and safe environment',
+  'stats-label':'Key Figures','stats-title':'Saint-Alexandre by the Numbers',
+  'stat-years':'Years<br>of Experience','stat-specialists':'Qualified<br>Specialists','stat-patients':'Patients<br>Treated','stat-availability':'24/7<br>Availability','stat-exams':'Tests<br>Performed',
+  'gallery-label':'News','gallery-title':'Our Center in Pictures','gallery-intro':'Discover our facilities, equipment and highlights of our medical center.',
+  'gal-label1':'Medical Center Entrance','gal-sub1':'A warm welcome awaits you','gal-label2':'Hospitalization Room','gal-sub2':'Comfort and serenity for your recovery','gal-label4':'Reception Area','gal-sub4':'Our team at your service','gal-label5':'Treatment Room','gal-sub5':'Modern equipment at your disposal','gal-label8':'Analysis Laboratory','gal-sub8':'Reliable and fast results','gal-label9':'Maternity Ward','gal-sub9':'Welcoming newborns','gal-label10':'Multipurpose Room','gal-sub10':'A suitable environment for all',
+  'contact-label':'Contact','contact-title':'Contact Us','contact-medi-title':'Medical Center','contact-loc-title':'Location','contact-location':'TotalEnergies, Odza borne 10','contact-map':'View on Google Maps','contact-form-heading':'Send a Message',
+  'form-name':'Full Name','form-email':'Email','form-phone':'Phone','form-subject':'Subject','form-select':'Select...','form-opt1':'Medical Center','form-other':'Other','form-message':'Message','form-btn':'Send Message','form-success':'Your message has been sent. We will respond as soon as possible.',
+  'footer-desc':'Your health, our commitment. A trusted institution serving the Yaoundé community since 2022.','footer-nav-title':'Navigation','footer-contact-title':'Quick Contact','footer-copy':'© 2026 Saint-Alexandre — All rights reserved','footer-tagline':'Designed with care for our community'
+}}
+let currentLang='fr'
+document.querySelectorAll('[data-i18n]').forEach(el=>{langData.fr[el.dataset.i18n]=el.innerHTML})
+function toggleLang(){
+  currentLang=currentLang==='fr'?'en':'fr'
+  document.querySelectorAll('.lang-toggle').forEach(btn=>btn.textContent=currentLang.toUpperCase())
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.dataset.i18n
+    if(langData[currentLang][key])el.innerHTML=langData[currentLang][key]
+  })
+}
+</script>
+</body>
+</html>
